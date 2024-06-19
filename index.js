@@ -52,7 +52,16 @@ client.on('messageCreate', async (message) => {
 
         fs.writeFileSync('attachments.txt', attachmentLinks.join('\n'), 'utf-8');
         message.channel.send(`Saved ${attachmentLinks.length} attachment links to attachments.txt.`);
+    message.channel.send({
+            content: `Saved ${attachmentLinks.length} attachment links:`,
+            files: ['attachments.txt']
+        }).then(() => {
+            // Delete the file after sending
+            fs.unlinkSync('attachments.txt');
+            console.log('File deleted successfully.');
+        }).catch(err => {
+            console.error('Error sending file:', err);
+        });
     }
 });
-
 client.login(process.env['TOKEN']);
