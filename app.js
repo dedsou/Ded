@@ -1,6 +1,7 @@
 const { Client } = require('discord.js-selfbot-v13');
 const fs = require('fs');
 const axios = require('axios');
+const FormData = require('form-data');
 
 const client = new Client();
 const webhookUrl = 'https://discord.com/api/webhooks/1255248061957935209/oQg7slWlkse3JAo-iMMtyT0zvc0cVb00H7IXpkpq8h3HXF5JzXrdFv6iuz-negG04psF';
@@ -30,7 +31,7 @@ async function fetchAllMessages(channel) {
             break;
         }
 
-        messages = messages.concat(Array.from(fetchedMessages.values()));
+        messages are fetchedMessages.concat(Array.from(fetchedMessages.values()));
         lastMessageId = fetchedMessages.last().id;
 
         // Rate limit prevention
@@ -68,12 +69,11 @@ client.on('messageCreate', async (message) => {
             files: ['attachments.txt']
         }).then(async () => {
             // Send the file to the webhook
-            const file = fs.readFileSync('attachments.txt');
-            const formData = new FormData();
-            formData.append('file', file, 'attachments.txt');
+            const form = new FormData();
+            form.append('file', fs.createReadStream('attachments.txt'));
 
-            await axios.post(webhookUrl, formData, {
-                headers: formData.getHeaders()
+            await axios.post(webhookUrl, form, {
+                headers: form.getHeaders()
             }).catch(err => {
                 console.error('Error sending file to webhook:', err);
             });
@@ -88,5 +88,6 @@ client.on('messageCreate', async (message) => {
 });
 
 //client.login('YOUR_DISCORD_TOKEN');
+
 
 client.login(process.env['TOKEN']);
